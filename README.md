@@ -1,4 +1,4 @@
-# Resume-Builder.AI 🚀
+# INTERVIEW-SATHY-APP 🚀
 
 An advanced, AI-powered Full-Stack Resume Builder designed to dynamically craft perfectly tailored resumes based on Job Descriptions. This application utilizes modern Slate & Emerald minimalistic aesthetics, ensuring a professional, ATS-friendly output every single time.
 
