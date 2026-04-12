@@ -28,6 +28,24 @@ An advanced, AI-powered Full-Stack Resume Builder designed to dynamically craft 
 - **Puppeteer** for HTML-to-PDF compilation rendering
 - **JWT** (JSON Web Tokens via Cookies)
 
+## 📄 Core Application Capabilities
+
+### 1. Dynamic PDF Resume Generation
+Say goodbye to poorly formatted exports. Resume-Builder.ai flawlessly compiles an ATS-friendly, visually striking PDF containing your summarized metrics and optimized bullet points directly from your job description.
+*(Showcasing zero-gap formatting and elegant typography)*
+
+![Generated Resume Demo](docs/images/resume_sample.png)
+
+### 2. Tailored Interview Q&A Generation
+Don't guess what the recruiter will ask. The AI cross-references your current resume with your target job description to generate high-probability **Technical** and **Behavioral** questions, complete with the intention behind each question and how to answer it perfectly.
+
+![Technical Questions Demo](docs/images/tech_questions.png)
+
+### 3. Day-Wise Preparation Roadmaps
+No more unstructured studying. The platform analyzes your exact skill gaps and formulates a rigid, easy-to-follow, day-by-step preparation plan telling you exactly what topics to focus on before your interview date.
+
+![Day-Wise Plan Demo](docs/images/day_plan.png)
+
 ## 🚀 Future Roadmap
 - Direct Overleaf / LaTeX code snippet export options
 - Custom styling templates (Double column, Classic, Creative)
