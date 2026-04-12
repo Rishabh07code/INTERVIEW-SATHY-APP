@@ -1,6 +1,6 @@
 # INTERVIEW-SATHY-APP 🚀
 
-An advanced, AI-powered Full-Stack Resume Builder designed to dynamically craft perfectly tailored resumes based on Job Descriptions. This application utilizes modern Slate & Emerald minimalistic aesthetics, ensuring a professional, ATS-friendly output every single time.
+Created an AI-powered full-stack application that generates ATS-optimized resumes from job descriptions, along with role-specific technical and behavioral interview questions and personalized day-wise preparation plans. Built with modern UI aesthetics and real-world GenAI concepts, with guidance from Sheriyans School of Coding.
 
 ![Home Page UI](docs/images/home_page.png)
 
