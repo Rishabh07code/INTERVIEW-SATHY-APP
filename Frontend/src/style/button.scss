@@ -1,0 +1,25 @@
+.button{
+
+    border: none;
+    outline: none;
+    padding-inline: 1.5rem;
+    padding-block: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.primary-button{
+        background-color: #10b981;
+        color: white;
+    }
+    
+    &:hover.primary-button {
+        background-color: #059669;
+    }
+
+    &:active{
+        background-color: #047857 !important;
+    }
+}

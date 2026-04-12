@@ -1,0 +1,24 @@
+@use "./style/button.scss";
+
+* {
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.highlight{
+    color: #10b981;
+    font-weight: 700;
+}
