@@ -1,30 +1,43 @@
 import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router'
+import { useNavigate, Link, Navigate } from 'react-router'
 import "../auth.form.scss"
 import { useAuth } from '../hooks/useAuth'
 
 const Login = () => {
 
-    const { loading, handleLogin } = useAuth()
+    const { user, loading, handleLogin } = useAuth()
     const navigate = useNavigate()
 
-    const [ email, setEmail ] = useState("")
-    const [ password, setPassword ] = useState("")
-    const [ error, setError ] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [error, setError] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    // While app is checking session cookie, show nothing (Protected handles this)
+    if (loading) {
+        return (
+            <main style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+                <p style={{ color: '#aaa', fontSize: '1.1rem' }}>Checking session...</p>
+            </main>
+        )
+    }
+
+    // Already logged in → send to home
+    if (user) {
+        return <Navigate to="/" replace />
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setError("")
+        setIsSubmitting(true)
         const result = await handleLogin({ email, password })
+        setIsSubmitting(false)
         if (result?.user) {
             navigate('/')
         } else {
             setError(result?.message || 'Login failed. Please check your credentials.')
         }
-    }
-
-    if (loading) {
-        return (<main><h1>Loading.......</h1></main>)
     }
 
     return (
@@ -43,15 +56,17 @@ const Login = () => {
                         <label htmlFor="email">Email</label>
                         <input
                             onChange={(e) => { setEmail(e.target.value) }}
-                            type="email" id="email" name='email' placeholder='Enter email address' />
+                            type="email" id="email" name='email' placeholder='Enter email address' required />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
                         <input
                             onChange={(e) => { setPassword(e.target.value) }}
-                            type="password" id="password" name='password' placeholder='Enter password' />
+                            type="password" id="password" name='password' placeholder='Enter password' required />
                     </div>
-                    <button className='button primary-button'>Login</button>
+                    <button className='button primary-button' disabled={isSubmitting}>
+                        {isSubmitting ? 'Logging in...' : 'Login'}
+                    </button>
                 </form>
                 <p>Don't have an account? <Link to={"/register"}>Register</Link></p>
             </div>

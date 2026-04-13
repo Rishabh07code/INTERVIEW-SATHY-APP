@@ -11,8 +11,6 @@ const tokenBlacklistModel = require("../models/blacklist.model")
 async function registerUserController(req, res) {
 
     const { username, email, password } = req.body
-    
-    console.log("REGISTER ATTEMPT:", username, email)
 
     if (!username || !email || !password) {
         return res.status(400).json({
@@ -44,13 +42,7 @@ async function registerUserController(req, res) {
         { expiresIn: "1d" }
     )
 
-    const isProduction = process.env.NODE_ENV === "production" || process.env.FRONTEND_URL;
-    res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
-        secure: isProduction ? true : false,
-        maxAge: 24 * 60 * 60 * 1000  // 1 day
-    })
+    res.cookie("token", token)
 
 
     res.status(201).json({
@@ -74,8 +66,6 @@ async function loginUserController(req, res) {
 
     const { email, password } = req.body
 
-    console.log("LOGIN ATTEMPT:", email)
-
     const user = await userModel.findOne({ email })
 
     if (!user) {
@@ -98,13 +88,7 @@ async function loginUserController(req, res) {
         { expiresIn: "1d" }
     )
 
-    const isProduction = process.env.NODE_ENV === "production" || process.env.FRONTEND_URL;
-    res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
-        secure: isProduction ? true : false,
-        maxAge: 24 * 60 * 60 * 1000  // 1 day
-    })
+    res.cookie("token", token)
     res.status(200).json({
         message: "User loggedIn successfully.",
         user: {
@@ -128,12 +112,7 @@ async function logoutUserController(req, res) {
         await tokenBlacklistModel.create({ token })
     }
 
-    const isProduction = process.env.NODE_ENV === "production" || process.env.FRONTEND_URL;
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: isProduction ? "none" : "lax",
-        secure: isProduction ? true : false,
-    })
+    res.clearCookie("token")
 
     res.status(200).json({
         message: "User logged out successfully"
