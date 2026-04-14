@@ -58,33 +58,52 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch({
-        args: [
-            "--no-sandbox",
-            "--disable-setuid-sandbox",
-            "--disable-dev-shm-usage",
-            "--disable-accelerated-2d-canvas",
-            "--no-first-run",
-            "--no-zygote",
-            "--single-process", // <- this one is often needed on low-RAM free tiers
-            "--disable-gpu"
-        ]
-    })
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
-
-    const pdfBuffer = await page.pdf({
-        format: "A4", margin: {
-            top: "20mm",
-            bottom: "20mm",
-            left: "15mm",
-            right: "15mm"
+    let browser = null
+    try {
+        console.log("Launching browser for PDF generation...")
+        browser = await puppeteer.launch({
+            args: [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-accelerated-2d-canvas",
+                "--no-first-run",
+                "--no-zygote",
+                "--single-process", 
+                "--disable-gpu"
+            ]
+        })
+        
+        console.log("Browser launched. Creating new page...")
+        const page = await browser.newPage()
+        
+        console.log("Setting HTML content...")
+        await page.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 30000 })
+        
+        console.log("Generating PDF buffer...")
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "15mm",
+                right: "15mm"
+            },
+            printBackground: true
+        })
+        
+        console.log("PDF generated successfully.")
+        return pdfBuffer
+    } catch (error) {
+        console.error("PDF Generation Error:", error.message)
+        console.error("Full Error Stack:", error.stack)
+        throw new Error("Failed to generate PDF: " + error.message)
+    } finally {
+        if (browser) {
+            console.log("Closing browser...")
+            await browser.close()
         }
-    })
-
-    await browser.close()
-
-    return pdfBuffer
+    }
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
