@@ -46,3 +46,10 @@
         }
     }
 }
+
+@media (max-width: 480px) {
+    .button, .generate-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
