@@ -42,7 +42,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 `
 
     const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -50,7 +50,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         }
     })
 
-    return JSON.parse(response.response.text())
+    return JSON.parse(response.text)
 
 
 }
@@ -58,50 +58,35 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    let browser = null
+    let browser = null;
     try {
-        console.log("Launching browser for PDF generation...")
         browser = await puppeteer.launch({
             args: [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
-                "--disable-accelerated-2d-canvas",
-                "--no-first-run",
-                "--no-zygote",
-                "--single-process", 
                 "--disable-gpu"
             ]
-        })
-        
-        console.log("Browser launched. Creating new page...")
-        const page = await browser.newPage()
-        
-        console.log("Setting HTML content...")
-        await page.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: 30000 })
-        
-        console.log("Generating PDF buffer...")
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
         const pdfBuffer = await page.pdf({
-            format: "A4",
-            margin: {
+            format: "A4", margin: {
                 top: "20mm",
                 bottom: "20mm",
                 left: "15mm",
                 right: "15mm"
-            },
-            printBackground: true
-        })
-        
-        console.log("PDF generated successfully.")
-        return pdfBuffer
+            }
+        });
+
+        return pdfBuffer;
     } catch (error) {
-        console.error("PDF Generation Error:", error.message)
-        console.error("Full Error Stack:", error.stack)
-        throw new Error("Failed to generate PDF: " + error.message)
+        console.error("PDF generation failed:", error);
+        throw error;
     } finally {
         if (browser) {
-            console.log("Closing browser...")
-            await browser.close()
+            await browser.close();
         }
     }
 }
@@ -126,7 +111,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
                     `
 
     const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
@@ -135,7 +120,7 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
     })
 
 
-    const jsonContent = JSON.parse(response.response.text())
+    const jsonContent = JSON.parse(response.text)
 
     const pdfBuffer = await generatePdfFromHtml(jsonContent.html)
 

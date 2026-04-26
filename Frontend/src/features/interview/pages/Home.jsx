@@ -20,9 +20,22 @@ const Home = () => {
 
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files[ 0 ]
+
+        if (!jobDescription || jobDescription.trim() === "") {
+            alert("Please provide the target job description.")
+            return
+        }
+
+        if (!resumeFile && (!selfDescription || selfDescription.trim() === "")) {
+            alert("Please either upload a resume or provide a self description to generate a personalized plan.")
+            return
+        }
+
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
         if (data?._id) {
             navigate(`/interview/${data._id}`)
+        } else {
+            alert("Failed to generate interview plan. Please check your inputs and try again.")
         }
     }
 

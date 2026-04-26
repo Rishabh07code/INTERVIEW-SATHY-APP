@@ -9,29 +9,61 @@ const interviewReportModel = require("../models/interviewReport.model")
  * @description Controller to generate interview report based on user self description, resume and job description.
  */
 async function generateInterViewReportController(req, res) {
+    try {
+        const { selfDescription, jobDescription } = req.body;
 
-    const resumeContent = await pdfParse(req.file.buffer)
-    const { selfDescription, jobDescription } = req.body
+        if (!jobDescription) {
+            return res.status(400).json({
+                message: "Job description is required."
+            });
+        }
 
-    const interViewReportByAi = await generateInterviewReport({
-        resume: resumeContent.text,
-        selfDescription,
-        jobDescription
-    })
+        if (!req.file && (!selfDescription || selfDescription.trim() === "")) {
+            return res.status(400).json({
+                message: "Either a resume or a self description is required."
+            });
+        }
 
-    const interviewReport = await interviewReportModel.create({
-        user: req.user.id,
-        resume: resumeContent.text,
-        selfDescription,
-        jobDescription,
-        ...interViewReportByAi
-    })
+        let resumeText = "";
+        if (req.file) {
+            try {
+                const resumeContent = await pdfParse(req.file.buffer);
+                resumeText = resumeContent.text;
+            } catch (pdfError) {
+                console.error("PDF Parse Error:", pdfError);
+                if (!selfDescription || selfDescription.trim() === "") {
+                    return res.status(400).json({
+                        message: "Failed to parse the uploaded resume. Please provide a clear PDF or a self-description."
+                    });
+                }
+            }
+        }
 
-    res.status(201).json({
-        message: "Interview report generated successfully.",
-        interviewReport
-    })
+        const interViewReportByAi = await generateInterviewReport({
+            resume: resumeText,
+            selfDescription: selfDescription || "",
+            jobDescription
+        });
 
+        const interviewReport = await interviewReportModel.create({
+            user: req.user.id,
+            resume: resumeText,
+            selfDescription,
+            jobDescription,
+            ...interViewReportByAi
+        });
+
+        res.status(201).json({
+            message: "Interview report generated successfully.",
+            interviewReport
+        });
+    } catch (error) {
+        console.error("Generate Interview Report Controller Error:", error);
+        res.status(500).json({
+            message: "An error occurred while generating the interview report.",
+            error: error.message
+        });
+    }
 }
 
 /**
